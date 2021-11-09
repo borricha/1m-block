@@ -17,7 +17,7 @@
 char *my_strnstr(const char *big, const char *little, size_t len);  //출처: https://wonillism.tistory.com/163
 bool check_list();
 void usage();
-std::string domain = "temp.com";
+std::string domain;
 sqlite3 *db;
 #pragma pack(push, 1)
 struct Ip_Tcp final
@@ -117,6 +117,7 @@ static int cb(struct nfq_q_handle *qh, struct nfgenmsg *nfmsg,
 		printf("Data Size: %d \n", data_size);
 		if (data_size > 0)
 		{
+			//Host가 존재하는지 데이터 길이만큼 확인 
 			domain_name = my_strnstr(ip_tcp->data, "Host:", data_size);
 
 			if (domain_name != NULL)
@@ -145,6 +146,7 @@ static int cb(struct nfq_q_handle *qh, struct nfgenmsg *nfmsg,
 				printf("디비와 비교해서 검사 시작!!\n");
 				std::string str(domain_name + start, domain_name + end);
 				domain = str;
+				//sqlite3 쿼리문 발생해서 디비에서 존재 검사
 				if (check_list())
 				{
 					printf("존재합니다\n");
@@ -223,7 +225,7 @@ bool check_list()
 
 int main(int argc, char **argv)
 {
-	if (argc != 2)
+	if (argc != 1)
 	{
 		usage();
 		return -1;
@@ -333,6 +335,6 @@ int main(int argc, char **argv)
 
 void usage()
 {
-	printf("syntax : netfilter-test <host>\n");
-	printf("sample : netfilter-test test.gilgil.net\n");
+	printf("syntax : 1m-block\n");
+	printf("sample : 1m-block\n");
 }
